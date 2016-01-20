@@ -64,9 +64,7 @@ class Record(SmartDict):
         return super(Record, self).__setitem__(key, value)
 
     def __init__(self, data, model=None):
-        import copy
         self.model = model
-        self.original_json = copy.deepcopy(data)
         super(Record, self).__init__(data)
 
 
