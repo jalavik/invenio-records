@@ -24,6 +24,12 @@ from __future__ import unicode_literals
 RECORDS_BREADCRUMB_TITLE_KEY = 'title.title'
 """Key used to extract the breadcrumb title from the record."""
 
+RECORDS_DELETED_FIELD_QUERY = '980:DELETED'
+"""Query used to see if the record is marked as deleted."""
+
+RECORDS_MERGED_MASTER_RECID_KEY = 'new_recid'
+"""Key used to extract the master recid if current record has been merged."""
+
 RECORD_DOCUMENT_NAME_GENERATOR = ('invenio_records.utils:'
                                   'default_name_generator')
 

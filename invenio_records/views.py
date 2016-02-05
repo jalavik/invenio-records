@@ -28,7 +28,7 @@ import warnings
 from functools import wraps
 
 from flask import (Blueprint, abort, current_app, flash, g, redirect,
-                   render_template, request, send_file)
+                   render_template, request, send_file, url_for)
 
 from flask_breadcrumbs import default_breadcrumb_root
 
@@ -44,6 +44,7 @@ from invenio_collections.decorators import check_collection
 
 from invenio_formatter import (get_output_format_content_type,
                                response_formated_records)
+from invenio_search.api import Query
 
 blueprint = Blueprint('record', __name__, url_prefix="/record",  # FIXME
                       static_url_path='/record', template_folder='templates',
@@ -99,7 +100,11 @@ def request_record(f):
             flash(auth_msg, 'error')
             abort(apache.HTTP_UNAUTHORIZED)
 
-        # TODO check record status (exists, merged, deleted)
+        if Query(cfg['RECORDS_DELETED_FIELD_QUERY']).match(record):
+            # Record is deleted. Check for referred master recid if merged or 404
+            if record.get(cfg['RECORDS_MERGED_MASTER_RECID_KEY']):
+                return redirect(url_for('.' + f.func_name, recid=record.get(cfg['RECORDS_MERGED_MASTER_RECID_KEY'])))
+            abort(404)
 
         title = record.get(cfg.get('RECORDS_BREADCRUMB_TITLE_KEY'), '')
         tabs = []
